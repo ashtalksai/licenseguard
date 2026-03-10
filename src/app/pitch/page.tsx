@@ -24,6 +24,7 @@ import {
   Zap,
   Globe,
   BarChart3,
+  MessageSquare,
 } from "lucide-react";
 
 /* ─── slide transition variants ─── */
@@ -517,7 +518,13 @@ function ClosingSlide() {
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-white/60 text-lg mb-10">
           Join practice managers who stopped worrying about compliance and started trusting a system.
         </motion.p>
-        <motion.a initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.8 }} href="https://credguard.ashketing.com/signup" className="inline-block bg-accent hover:bg-accent-hover text-accent-foreground font-bold px-8 py-4 rounded-xl text-lg transition-colors">
+        <motion.a
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1, scale: [1, 1.03, 1] }}
+          transition={{ delay: 0.8, scale: { delay: 1.5, duration: 2, repeat: Infinity, repeatType: "reverse" } }}
+          href="https://credguard.ashketing.com/signup"
+          className="inline-block bg-accent hover:bg-accent-hover text-accent-foreground font-bold px-8 py-4 rounded-xl text-lg transition-colors shadow-lg shadow-accent/30"
+        >
           Start Free Trial — No Credit Card
         </motion.a>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex items-center justify-center gap-6 mt-8 text-sm text-white/40">
@@ -559,10 +566,26 @@ const slideLabels = [
   "GTM", "Team", "CTA",
 ];
 
+const speakerNotes = [
+  "Lead with the product name + one-line description. The visual design should feel trustworthy and modern — this is a \"Bloomberg terminal for compliance, designed for humans\" brand.",
+  "Open every pitch, every demo, every post with this hook. It's specific. It's personal. It assumes guilt (correctly). Don't explain the problem — make them feel it.",
+  "Don't linger here. Hit the pain fast and move to the solution. The audience already knows this problem — they live it.",
+  "Let the dashboard screenshot do the talking. The design is the message. \"Looks like this handles itself\" is the reaction you want.",
+  "Don't over-engineer the market sizing. The key message is: there are 230,000 practices. If 1% pay $49/mo, that's $100M ARR. We don't need to boil the ocean.",
+  "The 5-minute setup is a real differentiator vs. enterprise tools that require IT + training. Emphasize \"you're done\" — the automation does the work after this.",
+  "We're pre-traction at MVP stage. The community signals are the traction. Frame it as \"the problem is validated — now we're building the user base.\"",
+  "The Professional plan at $49/mo is the core business. CAC is low because our audience is SEO and organic community channels. Churn should be low because practice managers don't want to rebuild their credential database.",
+  "The 2x2 matrix makes the positioning obvious without requiring explanation. \"Why doesn't Modio serve this segment?\" Because the economics don't work — enterprise sales cost more than small practices pay.",
+  "Our distribution advantage is the hook. It's specific, emotional, and immediately relevant. It opens conversations — not sales pitches. The Facebook Group community is the fastest path to first real users.",
+  "Tailor this slide to the audience. For investors, lead with the ask amount and use of funds. For partners, lead with audience alignment. For demos, skip this slide entirely and go straight to trial CTA.",
+  "End on the hook you opened with. Full circle. The problem they felt on Slide 2 is solved by Slide 12. Make the trial frictionless — no card, 5 minutes, real value immediately.",
+];
+
 /* ─── MAIN PAGE ─── */
 export default function PitchPage() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [showNotes, setShowNotes] = useState(false);
 
   const navigate = useCallback((next: number) => {
     if (next < 0 || next >= slideComponents.length || next === current) return;
@@ -574,6 +597,7 @@ export default function PitchPage() {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") navigate(current + 1);
       if (e.key === "ArrowLeft") navigate(current - 1);
+      if (e.key === "n" || e.key === "N") setShowNotes((v) => !v);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -599,9 +623,36 @@ export default function PitchPage() {
       </AnimatePresence>
 
       {/* Slide counter */}
-      <div className="fixed top-6 right-6 z-50 text-xs font-mono px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-sm text-white/70">
-        {current + 1} / {slideComponents.length}
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-2">
+        <button
+          onClick={() => setShowNotes((v) => !v)}
+          className={`p-2 rounded-full backdrop-blur-sm transition-all ${showNotes ? "bg-accent text-accent-foreground" : "bg-black/20 text-white/70 hover:bg-black/30"}`}
+          title="Toggle speaker notes (N)"
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+        </button>
+        <div className="text-xs font-mono px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-sm text-white/70">
+          {current + 1} / {slideComponents.length}
+        </div>
       </div>
+
+      {/* Speaker notes panel */}
+      <AnimatePresence>
+        {showNotes && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-16 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-xl bg-black/80 backdrop-blur-md text-white/90 rounded-xl px-6 py-4 text-sm leading-relaxed"
+          >
+            <div className="flex items-start gap-2">
+              <MessageSquare className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+              <p>{speakerNotes[current]}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Progress bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 h-1 bg-black/10">
