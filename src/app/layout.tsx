@@ -16,6 +16,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://credguard.ashketing.com"),
   title: "LicenseGuard — Credential Tracking for Medical Practices",
   description:
     "Track every credential for every staff member. Get alerts before anything lapses. Built for private medical practices.",
